@@ -1,0 +1,21 @@
+= A simple Conflunent Cloud Cluster with Pulumi
+
+== Configuration
+
+You can set a password for encrypting the Pulumi state file. For our demo, we leave it bank:
+
+```console
+export PULUMI_CONFIG_PASSPHRASE
+```
+
+Please set the following configuration values for your Pulumi stack:
+
+```console
+pulumi config set pulumi-ccloud-simple-cluster:confluentcloud_provider <CLOUD>
+pulumi config set pulumi-ccloud-simple-cluster:confluentcloud_region <REGION>
+pulumi config set pulumi-ccloud-simple-cluster:confluentcloud_environment_name <ENVIRONMENT_NAME>
+pulumi config set pulumi-ccloud-simple-cluster:confluentcloud_cluster_name <CLUSTER_NAME>
+pulumi config set pulumi-ccloud-simple-cluster:confluentcloud_cluster_type <CLUSTER_TYPE>
+pulumi config set pulumi-ccloud-simple-cluster:confluentcloud_test_topic <TEST_TOPIC_NAME>
+```
+

@@ -1,0 +1,90 @@
+= Examples for using Pulumi with Confluent Cloud
+
+This project shows some examples for using Pulumi with Confluent Cloud.
+Please note that at the moment, Pulumi is not officially supported by Confluent.
+If you need an officially supported tool, please use Terraform instead.
+
+CAUTION: Everything contained in this repository is not supported by Confluent.
+
+DISCLAIMER AND WARNING: You use this code at your own risk! Please do not use it for production systems. The author may not be held responsible for any harm caused by this code!
+
+== Installing Pulumi and the required tools
+
+Please point your browser to https://www.pulumi.com/docs/get-started/install/ for instructions on installing Pulumi.
+
+In this project, we use Python with the `uv` Python package manager. You can install it following the instructions here: https://docs.astral.sh/uv/getting-started/installation/
+
+On recent versions of Ubuntu Linux, you can install `uv` via snap:
+
+```consolse
+sudo snap install astral-uv
+```
+
+== Initializing a new Python Pulumi Project
+
+First, we need to `login` to Pulumi for managing the state of our project. This can be done with the Pulumi Cloud, but also locally. For these examples, we choose to manage the state locally:
+
+```console
+pulumi login --local
+```
+
+Note, for production storing the state locally is not recommended. Please check the Pulumi documentation for various better ways how to store the state, including Pulumi Cloud, self-managed S3 storage, and others: https://www.pulumi.com/docs/iac/concepts/state-and-backends/#managing-state-backend-options
+
+Create a new directory and a new Pulumi project inside of it, here we use Python:
+
+```console
+mkdir pulumi-ccloud-example-simple-cluster
+cd pulumi-ccloud-example-simple-cluster
+pulumi new python
+```
+
+During the dialog, we select `uv` as Python package manager for simplicity (and because it is really fast).
+
+Add the pulumi provider for Confluent Cloud by running
+
+```console
+uv add pulumi_confluentcloud
+```
+
+Install the dependencies:
+
+```consolse
+pulumi install
+```
+
+
+== Initialize an existing project
+
+If you already have a project configured but not initialized locally, just run (assuming that you have logged in to Pulumi already, see above):
+
+```console
+pulumi install
+```
+
+== Initialize project specific configurations
+
+In the project directory, run:
+
+```console
+pulumi up
+```
+
+Pulumi will check the configuration and ask you to set any missing configuration values.
+
+For Confluent Cloud, you always need access credentials. In this demo project, it is assumed that you have set two environment variables:
+
+```console
+export CONFLUENT_CLOUD_API_KEY="<your-api-key>"
+export CONFLUENT_CLOUD_API_SECRET="<your-api-secret>"
+```
+
+You can also provide these credentials in various other ways. Please check the documentation of the Pulumi Confluent Cloud provider for more details: https://www.pulumi.com/registry/packages/confluentcloud/.
+
+== Deleting resources
+
+Just run this inside of the respective folder and follow the interactive instructions (or specify `-y` if you are really, really sure):
+
+```console
+pulumi destroy
+```
+
