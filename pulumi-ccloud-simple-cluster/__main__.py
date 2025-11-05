@@ -131,6 +131,24 @@ schema_data = {
         }
     ]
 }
+# An updated version of the same schema, to be used in a second run (comment above, uncomment below)
+# A new version of the schema will be created in Schema Registry
+# schema_data = {
+#     'type': 'record',
+#     'name': 'io.confluent.pulumi.schema.example.record',
+#     'doc': 'This is an example schema',
+#     'fields': [
+#         {
+#             'name':'name',
+#             'type':'string'
+#         },
+#         {
+#             'name':'value',
+#             'type':'double',
+#             'default':0.0
+#         }
+#     ]
+# }
 schema = confluentcloud.Schema(f'{confluentcloud_test_topic}-value',
     subject_name=f'{confluentcloud_test_topic}-value',
     format='AVRO',
