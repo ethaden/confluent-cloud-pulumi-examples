@@ -72,6 +72,10 @@ basic_cluster_admin_api_key = confluentcloud.ApiKey(f'{confluentcloud_service_ac
                                                         'id': basic_cluster_admin_sa.id
                                                     }
                                                     )
+# Note the use of the "apply" method with a lambda when using the service account ID.
+# This is required as that ID is actually and output of a create/update of some infrastructure elements and only known after that operation.
+# Actually, it is implemented as a future. "apply" will be called only after the CRUD operation has completed, thus delaying the creation of the whole Role binding.
+# This wouldn't be possible if just using the ID as a string object.
 basic_cluster_admin_rbac = confluentcloud.RoleBinding(f'{confluentcloud_service_account_name}_cluster_role_binding_cluster_admin',
                                                     #principal='User:'+basic_cluster_admin_sa.id,
                                                     principal=basic_cluster_admin_sa.id.apply(lambda the_id: f'User:{the_id}'),
