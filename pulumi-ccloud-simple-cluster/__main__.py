@@ -135,8 +135,6 @@ schema_data = {
         }
     ]
 }
-# An updated version of the same schema, to be used in a second run (comment above, uncomment below)
-# A new version of the schema will be created in Schema Registry
 # schema_data = {
 #     'type': 'record',
 #     'name': 'io.confluent.pulumi.schema.example.record',
@@ -153,11 +151,17 @@ schema_data = {
 #         }
 #     ]
 # }
+
+# When using recreate_on_update=False, you can just comment the first "schema_data" definition and uncomment the second before runing Pulumi again
+# A new version of the schema will be created in Schema Registry, the original version (actually all older versions) become orphaned in SR.
+# When running "pulumi destroy", these older versions are not deleted and remain in SR.
+
 schema = confluentcloud.Schema(f'{confluentcloud_test_topic}-value',
     subject_name=f'{confluentcloud_test_topic}-value',
     format='AVRO',
     schema=json.dumps(schema_data),
     hard_delete=True,
+    recreate_on_update=False,
     rest_endpoint=schema_registry.rest_endpoint,
     schema_registry_cluster={
         'id': schema_registry.id,
@@ -168,3 +172,42 @@ schema = confluentcloud.Schema(f'{confluentcloud_test_topic}-value',
     },
     opts=pulumi.ResourceOptions(depends_on=schema_registry_role_binding_admin)
     )
+
+# Alternatively, you can manage each schema version in Pulumi explicitly. 
+# Just set "recreate_on_update=True" above and uncomment the lines below.
+# A new version of the same contract (with the same subject) will be created, but Pulumi will keep track of all versions configured in this config
+# This means, Pulumi will also do the house keeping, i.e. deleting all schemas when deleting the whole stack.
+
+# schema_data_v2 = {
+#     'type': 'record',
+#     'name': 'io.confluent.pulumi.schema.example.record',
+#     'doc': 'This is an example schema',
+#     'fields': [
+#         {
+#             'name':'name',
+#             'type':'string'
+#         },
+#         {
+#             'name':'value',
+#             'type':'double',
+#             'default':0.0
+#         }
+#     ]
+# }
+
+# schema_v2 = confluentcloud.Schema(f'{confluentcloud_test_topic}-value-v2',
+#     subject_name=f'{confluentcloud_test_topic}-value',
+#     format='AVRO',
+#     schema=json.dumps(schema_data_v2),
+#     hard_delete=True,
+#     recreate_on_update=True,
+#     rest_endpoint=schema_registry.rest_endpoint,
+#     schema_registry_cluster={
+#         'id': schema_registry.id,
+#     },
+#     credentials={
+#         'key': schema_registry_resource_owner_api_key.id,
+#         'secret': schema_registry_resource_owner_api_key.secret
+#     },
+#     opts=pulumi.ResourceOptions(depends_on=schema_registry_role_binding_admin)
+#     )
