@@ -161,7 +161,8 @@ schema = confluentcloud.Schema(f'{confluentcloud_test_topic}-value',
     format='AVRO',
     schema=json.dumps(schema_data),
     hard_delete=True,
-    recreate_on_update=False,
+    recreate_on_update=False, # Use this if Pulumi should not track all versions of a schema
+    # recreate_on_update=True, # Use this instead, if Pulumi should track and manage all versions of a schema
     rest_endpoint=schema_registry.rest_endpoint,
     schema_registry_cluster={
         'id': schema_registry.id,
@@ -195,6 +196,8 @@ schema = confluentcloud.Schema(f'{confluentcloud_test_topic}-value',
 #     ]
 # }
 
+# # A newer version of the schema. Note that the previous schema version has been added to the "depends_on" list.
+# # This guarantees a clean order when creating the schemas in one run. Just make sure to remove the "schema" object from the list if you have deleted it from Pulumi for testing
 # schema_v2 = confluentcloud.Schema(f'{confluentcloud_test_topic}-value-v2',
 #     subject_name=f'{confluentcloud_test_topic}-value',
 #     format='AVRO',
@@ -209,5 +212,6 @@ schema = confluentcloud.Schema(f'{confluentcloud_test_topic}-value',
 #         'key': schema_registry_resource_owner_api_key.id,
 #         'secret': schema_registry_resource_owner_api_key.secret
 #     },
-#     opts=pulumi.ResourceOptions(depends_on=schema_registry_role_binding_admin)
+#     opts=pulumi.ResourceOptions(depends_on=[schema_registry_role_binding_admin, schema]) # Use this line as long as you stil have the "schema" object defined above
+#     #opts=pulumi.ResourceOptions(depends_on=[schema_registry_role_binding_admin]) # If you have remove/commented the "schema" object, use this dependency relation, instead
 #     )
